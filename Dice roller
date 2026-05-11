@@ -122,6 +122,10 @@
       filter: drop-shadow(0 0 10px gold);
     }
 
+    .die.inverted {
+      filter: drop-shadow(0 0 10px red);
+    }
+
     .die-face {
       width: 55%;
       height: 55%;
@@ -187,7 +191,7 @@
 
       resultDiv.innerHTML = currentRolls.map((roll, index) => `
         <div
-          class="die ${roll.rerolled ? 'rerolled' : ''}"
+          class="die ${roll.rerolled ? 'rerolled' : ''} ${roll.inverted ? 'inverted' : ''}"
           onclick="rerollDie(${index})"
           oncontextmenu="invertDie(event, ${index})"
           title="Left click = reroll | Right click = invert"
@@ -231,7 +235,8 @@
       for (let i = 0; i < diceCount; i++) {
         currentRolls.push({
           value: rollDie(currentSides),
-          rerolled: false
+          rerolled: false,
+          inverted: false
         });
       }
 
@@ -241,6 +246,7 @@
     function rerollDie(index) {
       currentRolls[index].value = rollDie(currentSides);
       currentRolls[index].rerolled = true;
+      currentRolls[index].inverted = false;
 
       renderDice();
     }
@@ -250,6 +256,8 @@
 
       currentRolls[index].value =
         (currentSides + 1) - currentRolls[index].value;
+
+      currentRolls[index].inverted = !currentRolls[index].inverted;
 
       renderDice();
     }
