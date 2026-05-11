@@ -8,11 +8,13 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-image: url('./background20mm.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
+      background: linear-gradient(
+        135deg,
+        #dff6ff 0%,
+        #b8e7ff 35%,
+        #8fd3ff 70%,
+        #6fc3ff 100%
+      );
       color: white;
       display: flex;
       justify-content: center;
@@ -22,13 +24,13 @@
     }
 
     .container {
-      background: rgba(30, 30, 30, 0.95);
+      background: rgba(20, 40, 70, 0.88);
       padding: 28px;
       border-radius: 18px;
       width: 420px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(6px);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
     }
 
     h1 {
@@ -46,24 +48,24 @@
       display: block;
       margin-bottom: 8px;
       font-weight: bold;
-      color: #ddd;
+      color: #eef7ff;
     }
 
     input {
       width: 100%;
       padding: 12px;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
       border-radius: 10px;
       font-size: 16px;
       box-sizing: border-box;
-      background: #1a1a1a;
+      background: rgba(255,255,255,0.08);
       color: white;
     }
 
     input:focus {
       outline: none;
-      border-color: #4caf50;
-      box-shadow: 0 0 10px rgba(76,175,80,0.4);
+      border-color: #7ed6ff;
+      box-shadow: 0 0 10px rgba(126,214,255,0.5);
     }
 
     button {
@@ -73,7 +75,7 @@
       border-radius: 12px;
       font-size: 17px;
       cursor: pointer;
-      background: linear-gradient(135deg, #4caf50, #2e7d32);
+      background: linear-gradient(135deg, #5cc8ff, #2d8cff);
       color: white;
       font-weight: bold;
       transition: transform 0.15s ease, opacity 0.15s ease;
@@ -87,7 +89,7 @@
     .results {
       margin-top: 24px;
       padding: 18px;
-      background: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.10);
       border-radius: 14px;
       min-height: 100px;
       display: flex;
@@ -119,7 +121,7 @@
 
     .die:hover {
       transform: scale(1.08);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.35);
     }
 
     .die.rerolled {
@@ -136,7 +138,7 @@
     }
 
     button:disabled {
-      background: linear-gradient(135deg, #666, #444);
+      background: linear-gradient(135deg, #7f8fa6, #57606f);
       cursor: not-allowed;
       opacity: 0.6;
       transform: none !important;
@@ -178,7 +180,7 @@
 <body>
 
   <div class="container">
-    <h1>Dice Pool Roller</h1>
+    <h1>20MM TTRPG Dice Roller</h1>
 
     <div class="row">
       <label>Number of Dice</label>
@@ -188,12 +190,17 @@
     <button onclick="rollPool()">Roll Dice Pool</button>
 
     <div style="display:flex; gap:10px; margin-top:14px;">
-      <button id="rerollBtn" onclick="rerollSelected()" disabled>Reroll Selected</button>
-      <button id="invertBtn" onclick="invertSelected()" disabled>Invert Selected</button>
+      <button id="rerollBtn" onclick="rerollSelected()" disabled>
+        Reroll Selected
+      </button>
+
+      <button id="invertBtn" onclick="invertSelected()" disabled>
+        Invert Selected
+      </button>
     </div>
 
     <div class="results" id="results">
-      Roll some dice.
+      Search and destroy.
     </div>
   </div>
 
@@ -207,13 +214,19 @@
     }
 
     function renderDice() {
-      document.getElementById('rerollBtn').disabled = selectedDice.size === 0;
-      document.getElementById('invertBtn').disabled = selectedDice.size === 0;
+      document.getElementById('rerollBtn').disabled =
+        selectedDice.size === 0;
+
+      document.getElementById('invertBtn').disabled =
+        selectedDice.size === 0;
+
       const resultDiv = document.getElementById('results');
 
       resultDiv.innerHTML = currentRolls.map((roll, index) => `
         <div
-          class="die ${roll.rerolled ? 'rerolled' : ''} ${roll.inverted ? 'inverted' : ''} ${selectedDice.has(index) ? 'selected' : ''}"
+          class="die ${roll.rerolled ? 'rerolled' : ''}
+                      ${roll.inverted ? 'inverted' : ''}
+                      ${selectedDice.has(index) ? 'selected' : ''}"
           onclick="toggleSelect(${index})"
           title="Click to select die"
         >
@@ -248,8 +261,9 @@
     }
 
     function rollPool() {
-      const diceCount = parseInt(document.getElementById('diceCount').value);
-      
+      const diceCount = parseInt(
+        document.getElementById('diceCount').value
+      );
 
       currentRolls = [];
 
@@ -261,6 +275,7 @@
         });
       }
 
+      selectedDice.clear();
       renderDice();
     }
 
@@ -290,7 +305,8 @@
         currentRolls[index].value =
           (currentSides + 1) - currentRolls[index].value;
 
-        currentRolls[index].inverted = !currentRolls[index].inverted;
+        currentRolls[index].inverted =
+          !currentRolls[index].inverted;
       });
 
       selectedDice.clear();
