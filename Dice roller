@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dice Pool Roller</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #2d2d2d, #111);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: rgba(30, 30, 30, 0.95);
+      padding: 28px;
+      border-radius: 18px;
+      width: 420px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(6px);
+    }
+
+    h1 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 28px;
+      letter-spacing: 1px;
+    }
+
+    .row {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #ddd;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+      background: #1a1a1a;
+      color: white;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4caf50;
+      box-shadow: 0 0 10px rgba(76,175,80,0.4);
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 17px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #4caf50, #2e7d32);
+      color: white;
+      font-weight: bold;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover {
+      opacity: 0.95;
+      transform: scale(1.02);
+    }
+
+    .results {
+      margin-top: 24px;
+      padding: 18px;
+      background: rgba(0,0,0,0.35);
+      border-radius: 14px;
+      min-height: 100px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .die {
+      width: 54px;
+      height: 54px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #f5f5f5, #d0d0d0);
+      color: #111;
+      font-size: 22px;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+      animation: pop 0.25s ease;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      user-select: none;
+    }
+
+    .die:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+    }
+
+    .die.rerolled {
+      background: linear-gradient(145deg, #ffd54f, #ffb300);
+    }
+
+    @keyframes pop {
+      from {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Dice Pool Roller</h1>
+
+    <div class="row">
+      <label>Number of Dice</label>
+      <input type="number" id="diceCount" value="5" min="1" />
+    </div>
+
+    <div class="row">
+      <label>Dice Sides</label>
+      <input type="number" id="diceSides" value="6" min="2" />
+    </div>
+
+    <button onclick="rollPool()">Roll Dice Pool</button>
+
+    
+
+    <div class="results" id="results">
+      Roll some dice.
+    </div>
+  </div>
+
+  <script>
+    let currentRolls = [];
+    let currentSides = 6;
+
+    function rollDie(sides) {
+      return Math.floor(Math.random() * sides) + 1;
+    }
+
+    function renderDice() {
+      const resultDiv = document.getElementById('results');
+
+      resultDiv.innerHTML = currentRolls.map((roll, index) => `
+        <div
+          class="die ${roll.rerolled ? 'rerolled' : ''}"
+          onclick="rerollDie(${index})"
+          oncontextmenu="invertDie(event, ${index})"
+          title="Left click = reroll | Right click = invert"
+        >
+          ${roll.value}
+        </div>
+      `).join('');
+    }
+
+    function rollPool() {
+      const diceCount = parseInt(document.getElementById('diceCount').value);
+      currentSides = parseInt(document.getElementById('diceSides').value);
+
+      currentRolls = [];
+
+      for (let i = 0; i < diceCount; i++) {
+        currentRolls.push({
+          value: rollDie(currentSides),
+          rerolled: false
+        });
+      }
+
+      renderDice();
+    }
+
+    function rerollDie(index) {
+      currentRolls[index].value = rollDie(currentSides);
+      currentRolls[index].rerolled = true;
+
+      renderDice();
+    }
+
+    function invertDie(event, index) {
+      event.preventDefault();
+
+      currentRolls[index].value =
+        (currentSides + 1) - currentRolls[index].value;
+
+      renderDice();
+    }
+  </script>
+
+</body>
+</html>
