@@ -142,11 +142,6 @@
       <input type="number" id="diceCount" value="5" min="1" />
     </div>
 
-    <div class="row">
-      <label>Dice Sides</label>
-      <input type="number" id="diceSides" value="6" min="2" />
-    </div>
-
     <button onclick="rollPool()">Roll Dice Pool</button>
 
     
@@ -158,7 +153,7 @@
 
   <script>
     let currentRolls = [];
-    let currentSides = 6;
+    const currentSides = 6;
 
     function rollDie(sides) {
       return Math.floor(Math.random() * sides) + 1;
@@ -181,7 +176,7 @@
 
     function rollPool() {
       const diceCount = parseInt(document.getElementById('diceCount').value);
-      currentSides = parseInt(document.getElementById('diceSides').value);
+      
 
       currentRolls = [];
 
