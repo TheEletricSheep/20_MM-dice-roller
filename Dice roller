@@ -124,18 +124,11 @@
       box-shadow: 0 6px 16px rgba(0,0,0,0.35);
     }
 
-    .die.rerolled {
-      filter: drop-shadow(0 0 10px #00ff66);
-    }
-
-    .die.inverted {
-      filter: drop-shadow(0 0 10px #b84dff);
-    }
-
-    .die.selected {
-      filter: drop-shadow(0 0 12px red);
-      transform: scale(1.08);
-    }
+    .die.rerolled { filter: drop-shadow(0 0 10px #00ff66); }
+    .die.inverted { filter: drop-shadow(0 0 10px #b84dff); }
+    .die.selected { filter: drop-shadow(0 0 12px red); transform: scale(1.08); }
+    .die.bonus { filter: drop-shadow(0 0 14px orange); }
+    .die.raised { filter: drop-shadow(0 0 14px yellow); }
 
     button:disabled {
       background: linear-gradient(135deg, #7f8fa6, #57606f);
@@ -166,19 +159,13 @@
     }
 
     @keyframes pop {
-      from {
-        transform: scale(0.5);
-        opacity: 0;
-      }
-      to {
-        transform: scale(1);
-        opacity: 1;
-      }
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
   </style>
 </head>
-<body>
 
+<body>
   <div class="container">
     <h1>20MM TTRPG Dice Roller</h1>
 
@@ -188,6 +175,13 @@
     </div>
 
     <button onclick="rollPool()">Roll Dice Pool</button>
+
+    <div style="display:flex; gap:10px; margin-top:12px;">
+      <button onclick="addBonusDie()">Add Bonus Die</button>
+      <button id="raiseBtn" onclick="raiseSelected()" disabled>
+        Raise Selected +1
+      </button>
+    </div>
 
     <div style="display:flex; gap:10px; margin-top:14px;">
       <button id="rerollBtn" onclick="rerollSelected()" disabled>
@@ -199,9 +193,7 @@
       </button>
     </div>
 
-    <div class="results" id="results">
-      Search and destroy.
-    </div>
+    <div class="results" id="results">Search and destroy.</div>
   </div>
 
   <script>
@@ -214,21 +206,22 @@
     }
 
     function renderDice() {
-      document.getElementById('rerollBtn').disabled =
-        selectedDice.size === 0;
-
-      document.getElementById('invertBtn').disabled =
-        selectedDice.size === 0;
+      document.getElementById('rerollBtn').disabled = selectedDice.size === 0;
+      document.getElementById('invertBtn').disabled = selectedDice.size === 0;
+      document.getElementById('raiseBtn').disabled = selectedDice.size === 0;
 
       const resultDiv = document.getElementById('results');
 
       resultDiv.innerHTML = currentRolls.map((roll, index) => `
         <div
-          class="die ${roll.rerolled ? 'rerolled' : ''}
-                      ${roll.inverted ? 'inverted' : ''}
-                      ${selectedDice.has(index) ? 'selected' : ''}"
+          class="die
+            ${roll.rerolled ? 'rerolled' : ''}
+            ${roll.inverted ? 'inverted' : ''}
+            ${roll.bonus ? 'bonus' : ''}
+            ${roll.raised ? 'raised' : ''}
+            ${selectedDice.has(index) ? 'selected' : ''}"
           onclick="toggleSelect(${index})"
-          title="Click to select die"
+          oncontextmenu="spendDie(event, ${index})"
         >
           ${getDieFace(roll.value)}
         </div>
@@ -246,24 +239,17 @@
       };
 
       let html = '<div class="die-face">';
-
       for (let i = 0; i < 9; i++) {
-        if (faces[value].includes(i)) {
-          html += '<div class="pip"></div>';
-        } else {
-          html += '<div></div>';
-        }
+        html += faces[value].includes(i)
+          ? '<div class="pip"></div>'
+          : '<div></div>';
       }
-
       html += '</div>';
-
       return html;
     }
 
     function rollPool() {
-      const diceCount = parseInt(
-        document.getElementById('diceCount').value
-      );
+      const diceCount = parseInt(document.getElementById('diceCount').value);
 
       currentRolls = [];
 
@@ -271,7 +257,9 @@
         currentRolls.push({
           value: rollDie(currentSides),
           rerolled: false,
-          inverted: false
+          inverted: false,
+          bonus: false,
+          raised: false
         });
       }
 
@@ -280,11 +268,9 @@
     }
 
     function toggleSelect(index) {
-      if (selectedDice.has(index)) {
-        selectedDice.delete(index);
-      } else {
-        selectedDice.add(index);
-      }
+      selectedDice.has(index)
+        ? selectedDice.delete(index)
+        : selectedDice.add(index);
 
       renderDice();
     }
@@ -293,7 +279,7 @@
       selectedDice.forEach(index => {
         currentRolls[index].value = rollDie(currentSides);
         currentRolls[index].rerolled = true;
-        currentRolls[index].inverted = false;
+        currentRolls[index].raised = false;
       });
 
       selectedDice.clear();
@@ -305,14 +291,66 @@
         currentRolls[index].value =
           (currentSides + 1) - currentRolls[index].value;
 
-        currentRolls[index].inverted =
-          !currentRolls[index].inverted;
+        currentRolls[index].inverted = !currentRolls[index].inverted;
+        currentRolls[index].raised = false;
       });
 
       selectedDice.clear();
       renderDice();
     }
-  </script>
 
+    function addBonusDie() {
+      currentRolls.push({
+        value: 1,
+        rerolled: false,
+        inverted: false,
+        bonus: true,
+        raised: false
+      });
+
+      renderDice();
+    }
+
+    function raiseSelected() {
+      let inserts = [];
+
+      selectedDice.forEach(index => {
+        let die = currentRolls[index];
+        die.raised = false;
+
+        if (die.value >= currentSides) {
+          inserts.push({
+            index: index,
+            die: {
+              value: 1,
+              rerolled: false,
+              inverted: false,
+              bonus: true,
+              raised: false
+            }
+          });
+        } else {
+          die.value += 1;
+          die.raised = true;
+        }
+      });
+
+      selectedDice.clear();
+
+      // insert bonus dice right after their source die
+      inserts.forEach(item => {
+        currentRolls.splice(item.index + 1, 0, item.die);
+      });
+
+      renderDice();
+    }
+
+    function spendDie(event, index) {
+      event.preventDefault();
+      currentRolls.splice(index, 1);
+      selectedDice.clear();
+      renderDice();
+    }
+  </script>
 </body>
 </html>
