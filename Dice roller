@@ -181,6 +181,9 @@
       <button id="raiseBtn" onclick="raiseSelected()" disabled>
         Raise Selected +1
       </button>
+<button id="lowerBtn" onclick="lowerSelected()" disabled>
+  Lower Selected -1
+</button>
     </div>
 
     <div style="display:flex; gap:10px; margin-top:14px;">
@@ -209,6 +212,7 @@
       document.getElementById('rerollBtn').disabled = selectedDice.size === 0;
       document.getElementById('invertBtn').disabled = selectedDice.size === 0;
       document.getElementById('raiseBtn').disabled = selectedDice.size === 0;
+document.getElementById('lowerBtn').disabled = selectedDice.size === 0;
 
       const resultDiv = document.getElementById('results');
 
@@ -351,6 +355,30 @@
       selectedDice.clear();
       renderDice();
     }
+function lowerSelected() {
+  let toRemove = [];
+
+  selectedDice.forEach(index => {
+    let die = currentRolls[index];
+
+    if (die.value <= 1) {
+      toRemove.push(index);
+    } else {
+      die.value -= 1;
+      die.raised = false;
+    }
+  });
+
+  // remove highest indexes first
+  toRemove.sort((a, b) => b - a);
+
+  toRemove.forEach(index => {
+    currentRolls.splice(index, 1);
+    selectedDice.delete(index);
+  });
+
+  renderDice();
+}
   </script>
 </body>
 </html>
