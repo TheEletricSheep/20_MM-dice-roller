@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dice Pool Roller</title>
+
+  <!-- CONNECT CSS -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <h1>20MM TTRPG Dice Roller</h1>
+
+    <div class="row">
+      <label>Number of Dice</label>
+      <input type="number" id="diceCount" value="5" min="1"/>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:12px;">
+      <button onclick="rollPool()" style="flex:1;">
+        Roll Dice Pool
+      </button>
+
+      <div
+        id="deletedDisplay"
+        style="
+          width:72px;
+          height:72px;
+          display:flex;
+          justify-content:center;
+          align-items:center;
+          background:rgba(255,255,255,0.08);
+          border-radius:12px;
+          border:1px solid rgba(255,255,255,0.12);
+          font-size:12px;
+          color:#eef7ff;
+        "
+      >
+        --
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:12px;">
+      <button onclick="addBonusDie()">Add Bonus Die</button>
+
+      <button id="raiseBtn" onclick="raiseSelected()" disabled>
+        Raise Selected +1
+      </button>
+
+      <button id="lowerBtn" onclick="lowerSelected()" disabled>
+        Lower Selected -1
+      </button>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:14px;">
+      <button id="rerollBtn" onclick="rerollSelected()" disabled>
+        Reroll Selected
+      </button>
+
+      <button id="invertBtn" onclick="invertSelected()" disabled>
+        Invert Selected
+      </button>
+    </div>
+
+    <div class="results" id="results">
+      Search and destroy.
+    </div>
+  </div>
+
+  <!-- CONNECT JAVASCRIPT -->
+  <script type="module" src="main.js"></script>
+</body>
+</html>

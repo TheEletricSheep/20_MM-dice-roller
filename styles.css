@@ -1,0 +1,180 @@
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(
+    135deg,
+    #dff6ff 0%,
+    #b8e7ff 35%,
+    #8fd3ff 70%,
+    #6fc3ff 100%
+  );
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  background: rgba(20, 40, 70, 0.88);
+  padding: 28px;
+  border-radius: 18px;
+  width: 620px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+}
+
+h1 {
+  margin-top: 0;
+  text-align: center;
+  font-size: 28px;
+  letter-spacing: 1px;
+}
+
+.row {
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #eef7ff;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+  background: rgba(255,255,255,0.08);
+  color: white;
+}
+
+button {
+  width: 50%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #5cc8ff, #2d8cff);
+  color: white;
+  font-weight: bold;
+  transition: 0.15s ease;
+}
+
+button:hover {
+  opacity: 0.95;
+  transform: scale(1.02);
+}
+
+button:disabled {
+  background: linear-gradient(135deg, #7f8fa6, #57606f);
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none !important;
+}
+
+.results {
+  margin-top: 24px;
+  padding: 18px;
+  background: rgba(255,255,255,0.10);
+  border-radius: 14px;
+
+  height: 120px;
+  overflow-y: auto;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+
+  justify-content: center;
+  align-content: flex-start;
+}
+.results::-webkit-scrollbar {
+  width: 10px;
+}
+
+.results::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.25);
+  border-radius: 10px;
+}
+
+.die {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('./assets/bullet20mm.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: pop 0.25s ease;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+  user-select: none;
+}
+
+.die:hover {
+  transform: scale(1.08);
+}
+
+.die.rerolled {
+  filter: drop-shadow(0 0 10px #00ff66);
+}
+
+.die.inverted {
+  filter: drop-shadow(0 0 10px #b84dff);
+}
+
+.die.selected {
+  filter: drop-shadow(0 0 12px red);
+  transform: scale(1.08);
+}
+
+.die.bonus {
+  filter: drop-shadow(0 0 14px orange);
+}
+
+.die.raised {
+  filter: drop-shadow(0 0 14px yellow);
+}
+
+.die-face {
+  width: 55%;
+  height: 55%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  padding: 8px;
+  position: relative;
+  top: 6px;
+  box-sizing: border-box;
+}
+
+.pip {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  align-self: center;
+  justify-self: center;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
